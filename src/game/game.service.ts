@@ -9,7 +9,7 @@ export class GameService {
 
 
   findAll() {
-    return 'Buscar todos jogos';
+    return this.games;
   }
 
 create(createGameDto: CreateGameDto) {
