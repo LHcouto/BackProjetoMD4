@@ -5,8 +5,8 @@ import { GameModule } from './game/game.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [GameModule, PrismaModule],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [GameModule, PrismaModule],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}

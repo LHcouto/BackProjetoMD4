@@ -1,4 +1,4 @@
 export class Game {
-  id?: string;
-  number: number;
+    id?: string;
+    number: number;
 }
