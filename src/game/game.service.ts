@@ -8,8 +8,7 @@ import { Game } from "./entities/game.entity";
 
 @Injectable()
 export class GameService {
-
-   constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
 
   findAll(): Promise<Game[]> {
@@ -33,5 +32,9 @@ export class GameService {
       where: { id },
       data,
     })
+  }
+
+  async delete(id: string) {
+    await this.prisma.game.delete({ where: { id }});
   }
 }
