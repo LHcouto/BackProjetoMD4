@@ -3,7 +3,6 @@ import {
     NotFoundException,
     UnprocessableEntityException,
 } from '@nestjs/common';
-import { table } from 'console';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
