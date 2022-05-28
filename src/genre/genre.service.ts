@@ -12,15 +12,15 @@ export class GenreService {
     return `This action returns all genre`;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} genre`;
   }
 
-  update(id: number, updateGenreDto: UpdateGenreDto) {
+  update(id: string, updateGenreDto: UpdateGenreDto) {
     return `This action updates a #${id} genre`;
   }
 
-  remove(id: number) {
+  delete(id: string) {
     return `This action removes a #${id} genre`;
   }
 }

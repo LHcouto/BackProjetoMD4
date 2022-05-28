@@ -13,6 +13,7 @@ async function bootstrap() {
         .setDescription('Plataforma de jogos')
         .addTag('status')
         .addTag('game')
+        .addTag('genre')
         .setVersion('1.0.0')
         .build();
 
