@@ -46,3 +46,11 @@ model User {
 
   @@map("user")
 }
+
+model Profile {
+  id   String @id @default(uuid())
+  title String
+  imageUrl String
+   
+  @@map("profile")
+}
