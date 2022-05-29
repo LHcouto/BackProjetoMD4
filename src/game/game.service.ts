@@ -28,14 +28,11 @@ export class GameService {
         return record;
     }
 
-    async findOne(id: string): Promise<Game> {
-        return this.findById(id);
-    }
 
-    create(dto: CreateGameDto): Promise<Game> {
+    async create(dto: CreateGameDto): Promise<Game> {
         const data: Game = { ...dto };
 
-        return this.prisma.game.create({ data }).catch(this.handleError);
+        return await this.prisma.game.create({ data }).catch(this.handleError);
     }
 
     async update(id: string, dto: UpdateGameDto): Promise<Game> {

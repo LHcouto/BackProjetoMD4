@@ -8,8 +8,15 @@ datasource db {
 }
 
 model Game {
-  id     String @id @default(uuid())
-  number Int    @unique
+  id                 String @id @default(uuid())
+  title              String
+  coverImageUrl      String
+  description        String
+  year               Int
+  imdbScore          Int
+  trailerYoutubeUrl  String
+  gameplayYoutubeUrl String
+
 
   createdAt DateTime @default(now()) @map("created_at")
   updateAt  DateTime @updatedAt @map("updated_at")
