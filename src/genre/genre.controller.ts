@@ -29,8 +29,8 @@ export class GenreController {
   @ApiOperation({
     summary: 'Encontrar um gênero por ID',
   })
-  findOne(@Param('id') id: string) {
-    return this.genreService.findOne(id);
+  findById(@Param('id') id: string) {
+    return this.genreService.findById(id);
   }
 
   @Patch(':id')

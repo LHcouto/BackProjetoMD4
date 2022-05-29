@@ -43,11 +43,13 @@ export class CreateGameDto {
       description: 'trailer do jogo',
       example:  'wwww.youtube.com.br/halotrailer',
     })
+    @IsUrl()
     trailerYoutubeUrl: string;
 
     @ApiProperty({
       description: 'gampeplay do jogo',
       example: 'wwww.youtube.com.br/gameplayhalo',
     })
+    @IsUrl()
     gameplayYoutubeUrl: string;
 }
