@@ -32,8 +32,8 @@ export class GameController {
     @ApiOperation({
         summary: 'Visualizar um jogo',
     })
-    findById(@Param('id') id: string): Promise<Game> {
-        return this.gameService.findById(id);
+    findOne(@Param('id') id: string): Promise<Game> {
+        return this.gameService.findOne(id);
     }
 
     @Post()
