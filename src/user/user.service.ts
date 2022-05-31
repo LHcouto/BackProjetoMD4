@@ -27,8 +27,8 @@ export class UserService {
 
     findAll(): Promise<User[]> {
         return this.prisma.user.findMany({
-          select: this.userSelect,
-    });
+            select: this.userSelect,
+        });
     }
 
     async findOne(id: string): Promise<User> {
@@ -58,7 +58,9 @@ export class UserService {
             password: await bcrypt.hash(dto.password, 10),
         };
 
-        return await this.prisma.user.create({ data, select: this.userSelect, }).catch(this.handleError);
+        return await this.prisma.user
+            .create({ data, select: this.userSelect })
+            .catch(this.handleError);
     }
 
     async update(id: string, dto: UpdateUserDto): Promise<User> {
