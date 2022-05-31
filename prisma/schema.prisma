@@ -47,7 +47,7 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updateAt  DateTime @updatedAt @map("updated_at")
 
-  Profile Profile[]
+  profile Profile[]
 
 
   @@map("user")
@@ -60,7 +60,7 @@ model Profile {
   user     User   @relation(fields: [userId], references: [id])
   userId   String @map("user_id")
 
-  games Game[]
+  game Game[]
 
   @@map("profile")
 }
