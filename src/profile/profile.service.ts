@@ -3,54 +3,89 @@ import {
     NotFoundException,
     UnprocessableEntityException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './entities/profile.entity';
+import { PrismaService } from '../prisma/prisma.service';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class ProfileService {
     constructor(private readonly prisma: PrismaService) {}
 
     findAll(): Promise<Profile[]> {
-        return this.prisma.profile.findMany();
+        return this.prisma.profile.findMany({
+            include: {
+                user: true,
+                game: true,
+            },
+        });
     }
 
-    async findOne(id: string): Promise<Profile> {
-        const record = await this.prisma.profile.findUnique({ where: { id } });
+    async findById(id: string): Promise<Profile> {
+        const record = await this.prisma.profile.findUnique({
+            where: { id: id },
+            include: { game: true },
+        });
 
         if (!record) {
             throw new NotFoundException(
-                `Registro com o ID '${id}' não encontrado.`,
+                `Registro com o '${id}' não encontrado.`,
             );
         }
 
         return record;
     }
 
-    async create(dto: CreateProfileDto): Promise<Profile> {
-        const data: Profile = { ...dto };
+    findOne(id: string): Promise<Profile> {
+        return this.prisma.profile.findUnique({ where: { id } });
+    }
 
-        return await this.prisma.profile
-            .create({ data })
-            .catch(this.handleError);
+    async create(dto: CreateProfileDto): Promise<Profile> {
+        if (dto.gameId) {
+            return await this.prisma.profile
+                .create({
+                    data: {
+                        title: dto.title,
+                        imageUrl: dto.imageUrl,
+                        userId: dto.UserId,
+                        game: {
+                            connect: {
+                                id: dto.gameId,
+                            },
+                        },
+                    },
+                    include: { game: true, user: true },
+                })
+                .catch(this.handleError);
+        } else {
+            return await this.prisma.profile
+                .create({
+                    data: {
+                        title: dto.title,
+                        imageUrl: dto.imageUrl,
+                        userId: dto.UserId,
+                    },
+                    include: { game: true },
+                })
+                .catch(this.handleError);
+        }
     }
 
     async update(id: string, dto: UpdateProfileDto): Promise<Profile> {
-        await this.findOne(id);
+        await this.findById(id);
 
-        const data: Partial<Profile> = { ...dto };
-
-        return this.prisma.profile
-            .update({
-                where: { id },
-                data,
-            })
-            .catch(this.handleError);
+        return this.prisma.profile.update({
+            where: { id },
+            data: {
+                title: dto.title,
+                imageUrl: dto.imageUrl,
+                userId: dto.UserId,
+            },
+            include: { game: true },
+        });
     }
-
     async delete(id: string) {
-        await this.findOne(id);
+        await this.findById(id);
 
         await this.prisma.profile.delete({ where: { id } });
     }
@@ -59,7 +94,7 @@ export class ProfileService {
         const errorLines = error.message?.split('\n');
         const lastErrorLine = errorLines[errorLines.length - 1]?.trim();
         throw new UnprocessableEntityException(
-            lastErrorLine || 'Algum erro ocorreu ao executar a operação',
+            lastErrorLine || `Algum erro inesperado ocorreu`,
         );
     }
 }
