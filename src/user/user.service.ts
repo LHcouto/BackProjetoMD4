@@ -53,10 +53,14 @@ export class UserService {
             );
         }
 
+        delete dto.confirmPassword;
+
         const data: User = {
             ...dto,
             password: await bcrypt.hash(dto.password, 10),
         };
+
+
 
         return await this.prisma.user
             .create({ data, select: this.userSelect })

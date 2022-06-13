@@ -8,13 +8,17 @@ import {
     Delete,
     HttpCode,
     HttpStatus,
+    UseGuards,
 } from '@nestjs/common';
 import { GenreService } from './genre.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('genre')
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 @Controller('genre')
 export class GenreController {
     constructor(private readonly genreService: GenreService) {}

@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { Prisma } from '@prisma/client';
 
+
 @Injectable()
 export class GameService {
     constructor(private readonly prisma: PrismaService) {}
