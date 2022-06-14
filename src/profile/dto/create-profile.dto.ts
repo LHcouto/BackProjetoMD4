@@ -16,6 +16,15 @@ export class CreateProfileDto {
     })
     imageUrl: string;
 
-    UserId: string;
+    @ApiProperty({
+      description: 'id do jogo (opcional)',
+      example: '1d565ff0-d675-401a-98ae-52fbb2268f10',
+    })
     gameId?: string;
+
+    @ApiProperty({
+      description: 'id do jogo para adicionar ou remover dos favoritos (opcional)',
+      example: '1d565ff0-d675-401a-98ae-52fbb2268f10',
+    })
+    favoritoId?: string;
 }

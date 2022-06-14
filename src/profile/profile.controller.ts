@@ -15,6 +15,8 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { LoggedUser } from 'src/auth/logged-user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @ApiTags('profile')
 @UseGuards(AuthGuard())
@@ -27,8 +29,8 @@ export class ProfileController {
   @ApiOperation({
     summary: 'Criar um perfil',
   })
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profileService.create(createProfileDto);
+  create(@LoggedUser() user: User, @Body() createProfileDto: CreateProfileDto) {
+    return this.profileService.create(user.id, createProfileDto);
   }
 
   @Get()
@@ -51,8 +53,26 @@ export class ProfileController {
   @ApiOperation({
     summary: 'Editar um perfil por ID',
   })
-  update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profileService.update(id, updateProfileDto);
+  update(
+    @LoggedUser() user: User,
+    @Param('id') id: string,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    return this.profileService.update(user.id, id, updateProfileDto);
+  }
+
+  @Patch('favoriteGame/:id')
+  @ApiOperation({
+    summary: 'Adicionar ou remover um jogo favorito',
+  })
+  updateFavorite(
+    @Param('id') id: string,
+    @Body() UpdateProfileDto: UpdateProfileDto,
+  ) {
+    return this.profileService.addOrRemoveFavoriteGame(
+      id,
+      UpdateProfileDto.favoritoId,
+    );
   }
 
   @Delete(':id')
@@ -60,7 +80,7 @@ export class ProfileController {
   @ApiOperation({
     summary: 'Deletar um perfil por ID',
   })
-  delete(@Param('id') id: string) {
-    this.profileService.delete(id);
+  delete(@LoggedUser() user: User, @Param('id') id: string) {
+    this.profileService.delete(user.id, id);
   }
 }

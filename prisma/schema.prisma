@@ -17,13 +17,14 @@ model Game {
   trailerYoutubeUrl  String
   gameplayYoutubeUrl String
 
+  favoritos Favoritos[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updateAt  DateTime @updatedAt @map("updated_at")
 
   genre   Genre[]
   profile Profile[]
-  favoritos Favoritos[]
+
   @@map("game")
 }
 
@@ -43,7 +44,7 @@ model User {
   email    String  @unique
   password String
   cpf      String  @unique
-  isAdmin  Boolean
+  isAdmin  Boolean @default(false)
 
   createdAt DateTime @default(now()) @map("created_at")
   updateAt  DateTime @updatedAt @map("updated_at")
@@ -61,25 +62,19 @@ model Profile {
   user     User   @relation(fields: [userId], references: [id])
   userId   String @map("user_id")
 
-  game Game[]
-  favoritos Favoritos[]
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  favoritos Favoritos?
+  game      Game[]
+
 
   @@map("profile")
 }
 
 model Favoritos {
-  id     String @id @default(uuid())
-  game   Game   @relation(fields: [gameId], references: [id])
-  gameId String
+  id String @id @default(uuid())
+
   profile   Profile @relation(fields: [profileId], references: [id])
-  profileId String
+  profileId String  @unique @map("profile_id")
 
+  game Game[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("favoritos")
 }
