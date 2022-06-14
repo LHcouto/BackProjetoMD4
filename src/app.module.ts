@@ -7,9 +7,10 @@ import { GenreModule } from './genre/genre.module';
 import { UserModule } from './user/user.module';
 import { ProfileModule } from './profile/profile.module';
 import { AuthModule } from './auth/auth.module';
+import { HomepageModule } from './homepage/homepage.module';
 
 @Module({
-    imports: [GameModule, PrismaModule, GenreModule, UserModule, ProfileModule, AuthModule],
+    imports: [GameModule, PrismaModule, GenreModule, UserModule, ProfileModule, AuthModule, HomepageModule],
     controllers: [AppController],
     providers: [AppService],
 })
