@@ -16,7 +16,7 @@ export class ProfileService {
         return this.prisma.profile.findMany({
             include: {
                 user: true,
-                game: true,
+                favoritos: true,
             },
         });
     }
@@ -24,7 +24,7 @@ export class ProfileService {
     async findById(id: string): Promise<Profile> {
         const record = await this.prisma.profile.findUnique({
             where: { id: id },
-            include: { game: true },
+            include: { favoritos: true },
         });
 
         if (!record) {
@@ -48,13 +48,13 @@ export class ProfileService {
                         title: dto.title,
                         imageUrl: dto.imageUrl,
                         userId: dto.UserId,
-                        game: {
+                        favoritos: {
                             connect: {
                                 id: dto.gameId,
                             },
                         },
                     },
-                    include: { game: true, user: true },
+                    include: { favoritos: true, user: true },
                 })
                 .catch(this.handleError);
         } else {
@@ -65,7 +65,7 @@ export class ProfileService {
                         imageUrl: dto.imageUrl,
                         userId: dto.UserId,
                     },
-                    include: { game: true },
+                    include: { favoritos: true },
                 })
                 .catch(this.handleError);
         }
@@ -74,16 +74,37 @@ export class ProfileService {
     async update(id: string, dto: UpdateProfileDto): Promise<Profile> {
         await this.findById(id);
 
-        return this.prisma.profile.update({
-            where: { id },
-            data: {
+        if (dto.gameId) {
+          return this.prisma.profile
+            .update({
+              where: { id },
+              data: {
                 title: dto.title,
                 imageUrl: dto.imageUrl,
                 userId: dto.UserId,
-            },
-            include: { game: true },
-        });
-    }
+                favoritos: {
+                  connect: {
+                    id: dto.gameId,
+                  },
+                },
+              },
+              include: { favoritos: true },
+            })
+
+        } else {
+          return this.prisma.profile
+            .update({
+              where: { id },
+              data: {
+                title: dto.title,
+                imageUrl: dto.imageUrl,
+                userId: dto.UserId,
+              },
+              include: { favoritos: true },
+            })
+            
+        }
+      }
     async delete(id: string) {
         await this.findById(id);
 
