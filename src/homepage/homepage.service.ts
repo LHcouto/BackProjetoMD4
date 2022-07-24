@@ -26,19 +26,22 @@ export class HomepageService {
 
     }});
     const listGames = profileData.game;
-    const favoriteGames = profileData.favoritos;
+    const favoritos = profileData.favoritos;
     const orderedGames = [];
     const allGenres = await this.prisma.genre.findMany();
     allGenres.map((genre) => {
       const gamesperGenre = [];
+      const IdGame = [];
       listGames.map((game) => {
         if (game.genre[0].name == genre.name) {
           gamesperGenre.push(game.title);
+          IdGame.push(game.id);
         }
       });
       const genderObj = {
         genre: genre.name,
         title: gamesperGenre,
+        id: IdGame,
       };
       if (gamesperGenre.length !== 0) {
         orderedGames.push(genderObj);
@@ -46,7 +49,7 @@ export class HomepageService {
     });
     return {
       games: orderedGames,
-      favoriteGames: favoriteGames,
+      favoritos: favoritos,
     };
   }
 }
