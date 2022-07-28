@@ -1,11 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    HttpCode,
+    HttpStatus,
+    UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from './entities/user.entity';
-import { LoggedUser } from '../auth/logged-user.decorator';
 
 
 @ApiTags('user')
@@ -15,7 +24,7 @@ export class UserController {
 
   @Post()
   @ApiOperation({
-    summary: 'Criar um usuário'
+    summary: 'Criar um usuário',
   })
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
@@ -23,17 +32,17 @@ export class UserController {
 
   @Get()
   @ApiOperation({
-    summary: 'Listar todos os usuários'
+    summary: 'Listar todos os usuários',
   })
   @UseGuards(AuthGuard())
 @ApiBearerAuth()
-  findAll(@LoggedUser() user: User) {
-    return this.userService.findAll(user);
+  findAll() {
+    return this.userService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Visualizar um usuário por ID'
+    summary: 'Visualizar um usuário pelo ID',
   })
   @UseGuards(AuthGuard())
 @ApiBearerAuth()
@@ -43,7 +52,7 @@ export class UserController {
 
   @Patch(':id')
   @ApiOperation({
-    summary: 'Editar um usuário por ID'
+    summary: 'Editar um usuário pelo ID',
   })
   @UseGuards(AuthGuard())
 @ApiBearerAuth()
@@ -54,7 +63,7 @@ export class UserController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
-    summary: 'Deletar um usuário por ID'
+    summary: 'Remover um usuário pelo ID',
   })
   @UseGuards(AuthGuard())
 @ApiBearerAuth()

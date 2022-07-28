@@ -15,13 +15,12 @@ export class ProfileService {
     return this.prisma.profile.findMany({
       include: {
         user: true,
-        games: true,
-        favoriteGames: {
+        game: true,
+        favoritos: {
           select:{
-            games:{
+            game:{
               select:{
-                title: true,
-                id:true
+                title: true
               }
             }
           }
@@ -30,16 +29,16 @@ export class ProfileService {
     });
   }
 
-  async findById(id: string){
+  async find(id: string){
     const record = await this.prisma.profile.findUnique({
       where: {
         id: id,
       },
       include: {
-        games: true,
-        favoriteGames:{
+        game: true,
+        favoritos:{
           select:{
-            games:true,
+            game:true,
             id: true
           }
         } },
@@ -51,7 +50,7 @@ export class ProfileService {
   }
 
   async findOne(id: string) {
-    return this.findById(id);
+    return this.findOne(id);
   }
 
   async create(userId: string, dto: CreateProfileDto) {
@@ -62,15 +61,15 @@ export class ProfileService {
             title: dto.title,
             imageUrl: dto.imageUrl,
             userId: userId,
-            games: {
+            game: {
               connect: {
                 id: dto.gameId,
               },
             },
           },
           include:{
-            games: true,
-            favoriteGames:true,
+            game: true,
+            favoritos:true,
 
           }
         })
@@ -83,30 +82,30 @@ export class ProfileService {
             imageUrl: dto.imageUrl,
             userId: userId,
           },
-          include: { games: true, favoriteGames:true},
+          include: { game: true, favoritos:true},
         })
         .catch(this.handleError);
     }
   }
   async addOrRemoveFavoriteGame(profileId: string, gameId: string) {
-    const user = await this.findById(profileId);
+    const user = await this.findOne(profileId);
     let favoritedGame = false;
-    if(user.favoriteGames!=null){
+    if(user.favoritos!=null){
 
-      user.favoriteGames.games.map((game)=>{
+      user.favoritos.game.map((game)=>{
         if(gameId===game.id){
           favoritedGame = true;
         }
       })
     }else{
-      return this.prisma.favoriteGames.create({
+      return this.prisma.favoritos.create({
         data:{
         profile: {
           connect:{
             id: profileId
           },
         },
-        games: {
+        game: {
           connect:{
             id: gameId
           }
@@ -115,13 +114,13 @@ export class ProfileService {
       })
     }
     if(favoritedGame){
-      return await this.prisma.favoriteGames.update({
+      return await this.prisma.favoritos.update({
         where:{
-          id: user.favoriteGames.id,
+          id: user.favoritos.id,
 
         },
         data:{
-          games:{
+          game:{
             disconnect:{
               id: gameId,
             }
@@ -129,13 +128,13 @@ export class ProfileService {
         }
       })
     }else{
-      return await this.prisma.favoriteGames.update({
+      return await this.prisma.favoritos.update({
         where:{
-          id: user.favoriteGames.id,
+          id: user.favoritos.id,
 
         },
         data:{
-          games:{
+          game:{
             connect:{
               id: gameId,
             }
@@ -145,11 +144,11 @@ export class ProfileService {
     }
   }
   async update(userId: string, id: string, dto: UpdateProfileDto) {
-    const user = await this.findById(id);
+    const user = await this.findOne(id);
 
     if (dto.gameId) {
       let GameExist = false;
-      user.games.map((game) => {
+      user.game.map((game: { id: string; }) => {
         if (game.id == dto.gameId) {
           GameExist = true;
         }
@@ -162,13 +161,13 @@ export class ProfileService {
               title: dto.title,
               imageUrl: dto.imageUrl,
               userId: userId,
-              games: {
+              game: {
                 disconnect: {
                   id: dto.gameId,
                 },
               },
             },
-            include: { games: true },
+            include: { game: true },
           })
           .catch(this.handleError);
       } else {
@@ -179,13 +178,13 @@ export class ProfileService {
               title: dto.title,
               imageUrl: dto.imageUrl,
               userId: userId,
-              games: {
+              game: {
                 connect: {
                   id: dto.gameId,
                 },
               },
             },
-            include: { games: true },
+            include: { game: true },
           })
           .catch(this.handleError);
       }
@@ -198,25 +197,22 @@ export class ProfileService {
             imageUrl: dto.imageUrl,
             userId: userId,
           },
-          include: { games: true },
+          include: { game: true },
         })
         .catch(this.handleError);
     }
   }
 
   async delete(userId: string, id: string) {
-    const profile = await this.findById(id);
-    if(profile.favoriteGames){
-    await this.prisma.favoriteGames.delete({
+    const profile = await this.findOne(id);
+    await this.prisma.favoritos.delete({
       where:{
-        id:profile.favoriteGames.id
+        id:profile.favoritos.id
       }
     })
     await this.prisma.profile.delete({ where: { id } });
-  }else{
-    await this.prisma.profile.delete({ where: { id } });
   }
-  }
+
   handleError(error: Error): undefined {
     console.error(error);
     const errorLines = error.message?.split('\n');

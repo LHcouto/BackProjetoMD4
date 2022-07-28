@@ -1,5 +1,5 @@
 {
-  "name": "megadrive-projeto1-mod04",
+  "name": "xbox-live",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -44,6 +44,7 @@
     "rxjs": "^7.2.0",
     "ts-node": "^10.0.0",
     "swagger-ui-express": "^4.4.0"
+
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
