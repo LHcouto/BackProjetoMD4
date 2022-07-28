@@ -24,7 +24,7 @@ export class GameService {
         imdbScore: createGameDto.imdbScore,
         trailerYoutubeUrl: createGameDto.trailerYoutubeUrl,
         gameplayYoutubeUrl: createGameDto.gameplayYoutubeUrl,
-        genre: {
+        genres: {
           connect: {
             name: createGameDto.genreName,
           },
@@ -35,7 +35,7 @@ export class GameService {
         .create({
           data,
           include: {
-            genre: true,
+            genres: true,
           },
         })
         .catch(this.handleError);
@@ -49,17 +49,17 @@ export class GameService {
   findAll() {
     return this.prisma.game.findMany({
       include: {
-        genre: true,
+        genres: true,
       },
     });
   }
-  async findOne(id: string) {
+  async findById(id: string) {
     const record = await this.prisma.game.findUnique({
       where: {
         id: id,
       },
       include: {
-        genre: true,
+        genres: true,
       },
     });
     if (!record) {
@@ -70,7 +70,7 @@ export class GameService {
 
   async update(id: string, dto: UpdateGameDto, user: User) {
     if(user.isAdmin){
-    const gameAtual = await this.findOne(id);
+    const gameAtual = await this.findById(id);
     const data: Prisma.GameUpdateInput = {
       title: dto.title,
       description: dto.description,
@@ -79,9 +79,9 @@ export class GameService {
       imdbScore: dto.imdbScore,
       trailerYoutubeUrl: dto.trailerYoutubeUrl,
       gameplayYoutubeUrl: dto.gameplayYoutubeUrl,
-      genre: {
+      genres: {
         disconnect: {
-          name: gameAtual.genre[0].name,
+          name: gameAtual.genres[0].name,
         },
         connect: {
           name: dto.genreName,
@@ -93,7 +93,7 @@ export class GameService {
         where: { id },
         data,
         include: {
-          genre: true,
+          genres: true,
         },
       })
       .catch(this.handleError)}
@@ -106,7 +106,7 @@ export class GameService {
 
   async delete(id: string, user: User) {
     if(user.isAdmin){
-    await this.findOne(id);
+    await this.findById(id);
     await this.prisma.game.delete({ where: { id } })}
     else{
       throw new UnauthorizedException('Usuário não tem permissão. Caso isso esteja errado, contate o ADMIN!')

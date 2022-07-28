@@ -1,10 +1,13 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:lpVfDR8uKToR0o8czApJ@containers-us-west-63.railway.app:7773/railway"
 }
 
 model Game {
@@ -17,24 +20,26 @@ model Game {
   trailerYoutubeUrl  String
   gameplayYoutubeUrl String
 
-  favoritos Favoritos[]
+  favoriteGames FavoriteGames[]
+
+
 
   createdAt DateTime @default(now()) @map("created_at")
-  updateAt  DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  genre   Genre[]
-  profile Profile[]
+  genres   Genre[]
+  profiles Profile[]
 
   @@map("game")
 }
 
 model Genre {
-  name String @id @default(uuid())
+  name String @id @unique
 
   createdAt DateTime @default(now()) @map("created_at")
-  updateAt  DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  game Game[]
+  games Game[]
   @@map("genre")
 }
 
@@ -47,11 +52,9 @@ model User {
   isAdmin  Boolean @default(false)
 
   createdAt DateTime @default(now()) @map("created_at")
-  updateAt  DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   profile Profile[]
-
-
   @@map("user")
 }
 
@@ -62,19 +65,19 @@ model Profile {
   user     User   @relation(fields: [userId], references: [id])
   userId   String @map("user_id")
 
-  favoritos Favoritos?
-  game      Game[]
+  favoriteGames FavoriteGames?
+
+  games Game[]
 
 
   @@map("profile")
 }
 
-model Favoritos {
+model FavoriteGames {
   id String @id @default(uuid())
 
   profile   Profile @relation(fields: [profileId], references: [id])
-  profileId String  @unique @map("profile_id")
+  profileId String  @map("profile_id") @unique
 
-  game Game[]
-
+  games Game[]
 }

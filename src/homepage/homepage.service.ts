@@ -13,27 +13,27 @@ export class HomepageService {
       select: {
         title: true,
         imageUrl: true,
-        game: {
+        games: {
           include: {
-            genre: true,
+            genres: true,
           },
         },
-        favoritos:{
+        favoriteGames:{
           select:{
-            game: true
+            games: true
           }
         }
 
     }});
-    const listGames = profileData.game;
-    const favoritos = profileData.favoritos;
+    const listGames = profileData.games;
+    const favoriteGames = profileData.favoriteGames;
     const orderedGames = [];
     const allGenres = await this.prisma.genre.findMany();
     allGenres.map((genre) => {
       const gamesperGenre = [];
       const IdGame = [];
       listGames.map((game) => {
-        if (game.genre[0].name == genre.name) {
+        if (game.genres[0].name == genre.name) {
           gamesperGenre.push(game.title);
           IdGame.push(game.id);
         }
@@ -49,7 +49,7 @@ export class HomepageService {
     });
     return {
       games: orderedGames,
-      favoritos: favoritos,
+      favoriteGames: favoriteGames,
     };
   }
 }

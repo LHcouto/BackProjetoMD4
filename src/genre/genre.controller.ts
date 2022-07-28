@@ -1,76 +1,58 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
-import { GenreService } from './genre.service';
-import { CreateGenreDto } from './dto/create-genre.dto';
-import { UpdateGenreDto } from './dto/update-genre.dto';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { LoggedUser } from 'src/auth/logged-user.decorator';
-import { User } from 'src/user/entities/user.entity';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { LoggedUser } from '../auth/logged-user.decorator';
+import { User } from '../user/entities/user.entity';
+import { CreateGenreDto} from './dto/create-genre.dto';
+import { UpdateGenreDto } from './dto/update-genre.dto';
 import { Genre } from './entities/genre.entity';
-
-@ApiTags('genre')
+import { GenreService } from './genre.service';
+@ApiTags('Genres')
 @UseGuards(AuthGuard())
 @ApiBearerAuth()
-@Controller('genre')
+@Controller('genres')
 export class GenreController {
-  constructor(private readonly genreService: GenreService) {}
-
-  @Post()
-  @ApiOperation({
-    summary: 'Criar um gênero',
-  })
-  create(
-    @LoggedUser() user: User,
-    @Body() dto: CreateGenreDto,
-  ): Promise<Genre> {
-    return this.genreService.create(dto, user);
-  }
+  constructor(private readonly genreService: GenreService){}
 
   @Get()
   @ApiOperation({
-    summary: 'Listar todos os gêneros',
+    summary: 'Listar todos os gêneros'
   })
-  findAll() {
+  findAll(): Promise<Genre[]> {
     return this.genreService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Encontrar um gênero por ID',
+    summary: 'Achar um gênero por NOME'
   })
-  findOne(@Param('id') id: string): Promise<Genre> {
+  findOne(@Param('id') id:string): Promise<Genre>{
     return this.genreService.findOne(id);
+  }
+
+  @Post()
+  @ApiOperation({
+    summary: 'Criar um gênero'
+  })
+  create(@LoggedUser() user: User,@Body()dto: CreateGenreDto): Promise<Genre> {
+    return this.genreService.create(dto, user);
   }
 
   @Patch(':id')
   @ApiOperation({
-    summary: 'Atualizar um gênero',
+    summary: 'Atualizar um gênero por NOME'
   })
-  update(
-    @LoggedUser() user: User,
-    @Param('id') id: string,
-    @Body() dto: UpdateGenreDto,
-  ): Promise<Genre> {
-    return this.genreService.update(id, dto, user);
+  update(@LoggedUser() user: User,@Param('id') id:string, @Body()dto: UpdateGenreDto): Promise<Genre>{
+    return this.genreService.update(id, dto, user)
+
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
-    summary: 'Deletar um gênero',
+    summary: 'Deletar um gênero por NOME'
   })
-  delete(@LoggedUser() user: User, @Param('id') id: string) {
+  delete(@LoggedUser() user: User,@Param('id') id: string){
     this.genreService.delete(id, user);
   }
 }

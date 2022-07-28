@@ -1,22 +1,13 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
+  Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards
 } from '@nestjs/common';
-import { ProfileService } from './profile.service';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
+import { LoggedUser } from '../auth/logged-user.decorator';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { LoggedUser } from 'src/auth/logged-user.decorator';
-import { User } from 'src/user/entities/user.entity';
+import { ProfileService } from './profile.service';
 
 @ApiTags('profile')
 @UseGuards(AuthGuard())
@@ -29,13 +20,13 @@ export class ProfileController {
   @ApiOperation({
     summary: 'Criar um perfil',
   })
-  create(@LoggedUser() user: User, @Body() createProfileDto: CreateProfileDto) {
-    return this.profileService.create(user.id, createProfileDto);
+  create(@LoggedUser() user: User,@Body() createProfileDto: CreateProfileDto) {
+    return this.profileService.create(user.id,createProfileDto);
   }
 
   @Get()
   @ApiOperation({
-    summary: 'listar todos os perfis',
+    summary: 'Listar todos os perfis',
   })
   findAll() {
     return this.profileService.findAll();
@@ -43,7 +34,7 @@ export class ProfileController {
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Visualizar um perfil por ID',
+    summary: 'Achar um perfil por ID',
   })
   findOne(@Param('id') id: string) {
     return this.profileService.findOne(id);
@@ -53,34 +44,24 @@ export class ProfileController {
   @ApiOperation({
     summary: 'Editar um perfil por ID',
   })
-  update(
-    @LoggedUser() user: User,
-    @Param('id') id: string,
-    @Body() updateProfileDto: UpdateProfileDto,
-  ) {
-    return this.profileService.update(user.id, id, updateProfileDto);
+  update(@LoggedUser() user: User, @Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
+    return this.profileService.update(user.id,id,updateProfileDto);
   }
 
   @Patch('favoriteGame/:id')
   @ApiOperation({
-    summary: 'Adicionar ou remover um jogo favorito',
+    summary: 'Adicionar ou remover um game do favorito',
   })
-  updateFavorite(
-    @Param('id') id: string,
-    @Body() UpdateProfileDto: UpdateProfileDto,
-  ) {
-    return this.profileService.addOrRemoveFavoriteGame(
-      id,
-      UpdateProfileDto.favoritoId,
-    );
-  }
+updateFavorite(@Param('id') id: string, @Body() UpdateProfileDto: UpdateProfileDto){
+  return this.profileService.addOrRemoveFavoriteGame(id,UpdateProfileDto.favoriteGameId)
+}
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Deletar um perfil por ID',
   })
-  delete(@LoggedUser() user: User, @Param('id') id: string) {
-    this.profileService.delete(user.id, id);
+  delete(@LoggedUser() user:User, @Param('id') id: string) {
+    this.profileService.delete(user.id,id);
   }
 }
